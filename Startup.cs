@@ -36,6 +36,15 @@ namespace commandAPI
             services.AddControllers().AddNewtonsoftJson(s =>{
                 s.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
             });
+            services.AddSwaggerGen(c=>{
+                c.SwaggerDoc("v1" , new Microsoft.OpenApi.Models.OpenApiInfo
+                {
+                    Title ="My API" , 
+                    Version ="v1"
+                }
+                );
+            });
+        
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
           // register services with service configure  
            // services.AddSingleton;
@@ -43,10 +52,7 @@ namespace commandAPI
             // services.AddScoped<ICommandRepo, MockCommandRepo>();
             services.AddScoped<ICommandRepo, SqlCommandRepo>();
 
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "commandAPI", Version = "v1" });
-            });
+           
         }
 
         // setup our request pipeline (request pipeline has muliple of middlewares and middleware has multipl of function )
@@ -70,6 +76,10 @@ namespace commandAPI
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c=>{
+                c.SwaggerEndpoint("/swagger/v1/swagger.json" , "My API v1");
             });
         }
     }
